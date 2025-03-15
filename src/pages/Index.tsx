@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import Logo from '@/components/Logo';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { Flag } from 'lucide-react';
 
 const FeatureCard = ({ 
   title, 
@@ -162,6 +163,29 @@ const Index = () => {
               </svg>}
               delay="animate-delay-100"
             />
+          </div>
+          
+          {/* Post a Complaint Card - New Addition */}
+          <div className="mt-12 flex justify-center">
+            <div className={cn(
+              "bg-white/80 backdrop-blur-sm border border-gray-100 rounded-2xl p-8 shadow-sm w-full max-w-md",
+              "hover:shadow-md hover:bg-white transition-all duration-300 animate-fade-in-up animate-delay-300"
+            )}>
+              <div className="flex flex-col items-center text-center">
+                <div className="h-14 w-14 rounded-xl bg-gradient-to-r from-civilink-red/20 to-civilink-purple/20 flex items-center justify-center mb-4">
+                  <Flag className="w-7 h-7 text-civilink-purple" />
+                </div>
+                <h3 className="text-2xl font-semibold mb-2">Submit a Complaint</h3>
+                <p className="text-muted-foreground mb-6">
+                  Have an issue in your community? Report it directly to local authorities with our easy-to-use complaint system.
+                </p>
+                <Link to="/complaint">
+                  <Button size="lg" className="rounded-full px-8 bg-gradient-to-r from-civilink-purple to-civilink-red hover:opacity-90 transition-opacity">
+                    Post a Complaint
+                  </Button>
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </section>
