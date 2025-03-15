@@ -13,15 +13,19 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import Logo from '@/components/Logo';
-import { ArrowLeft, Flag, Image, MapPin, Upload } from 'lucide-react';
+import NavBar from '@/components/NavBar';
+import { ArrowLeft, Flag, Image, MapPin, Upload, AlertTriangle, CheckCircle } from 'lucide-react';
 
 const ComplaintForm = () => {
   const [location, setLocation] = useState<{lat: number, lng: number} | null>(null);
   const [loadingLocation, setLoadingLocation] = useState(false);
   const [formData, setFormData] = useState({
     description: '',
+    risk: 'low',
+    category: 'road', // Default category
   });
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -29,10 +33,25 @@ const ComplaintForm = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleFormChange = (e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+    const { name, value } = e.target;
     setFormData({
       ...formData,
-      description: e.target.value
+      [name]: value
+    });
+  };
+
+  const handleRadioChange = (value: string) => {
+    setFormData({
+      ...formData,
+      risk: value
+    });
+  };
+
+  const handleCategoryChange = (value: string) => {
+    setFormData({
+      ...formData,
+      category: value
     });
   };
 
@@ -115,7 +134,7 @@ const ComplaintForm = () => {
     }
 
     // Here you would typically submit the data to your backend
-    // For now, we'll just show a success message
+    // For now, we'll just show a success message and redirect
     
     toast({
       title: "Complaint submitted successfully!",
@@ -123,29 +142,21 @@ const ComplaintForm = () => {
     });
 
     // Reset form
-    setFormData({ description: '' });
+    setFormData({ description: '', risk: 'low', category: 'road' });
     setSelectedImage(null);
     setImagePreview(null);
     setLocation(null);
     
-    // Navigate back to home
+    // Navigate to reported issues page
     setTimeout(() => {
-      navigate('/');
+      navigate('/issues/reported');
     }, 2000);
   };
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header */}
-      <header className="p-6 flex justify-between items-center animate-fade-in bg-white shadow-sm">
-        <div className="flex items-center gap-2">
-          <Link to="/" className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors">
-            <ArrowLeft className="h-4 w-4" />
-            <span>Back to Home</span>
-          </Link>
-        </div>
-        <Logo />
-      </header>
+      <NavBar />
 
       {/* Form Content */}
       <div className="flex-grow p-6 md:p-8 flex justify-center items-start">
@@ -158,7 +169,7 @@ const ComplaintForm = () => {
               <CardTitle>Submit a Complaint</CardTitle>
             </div>
             <CardDescription>
-              Please provide details about your complaint. Include a description, an image, and your location.
+              Please provide details about your complaint. Include a description, an image, your location, and the severity level.
             </CardDescription>
           </CardHeader>
           <form onSubmit={handleSubmit}>
@@ -170,12 +181,65 @@ const ComplaintForm = () => {
                 </Label>
                 <Textarea 
                   id="description"
+                  name="description"
                   placeholder="Please describe your complaint in detail..."
                   value={formData.description}
-                  onChange={handleDescriptionChange}
+                  onChange={handleFormChange}
                   rows={5}
                   className="resize-none"
                 />
+              </div>
+              
+              {/* Category Selection */}
+              <div className="space-y-2">
+                <Label>
+                  Category <span className="text-destructive">*</span>
+                </Label>
+                <RadioGroup 
+                  value={formData.category} 
+                  onValueChange={handleCategoryChange}
+                  className="flex flex-col space-y-1"
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="electricity" id="electricity" />
+                    <Label htmlFor="electricity" className="cursor-pointer">Electricity</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="road" id="road" />
+                    <Label htmlFor="road" className="cursor-pointer">Road</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="cleanliness" id="cleanliness" />
+                    <Label htmlFor="cleanliness" className="cursor-pointer">Cleanliness</Label>
+                  </div>
+                </RadioGroup>
+              </div>
+              
+              {/* Risk Assessment */}
+              <div className="space-y-2">
+                <Label>
+                  Risk Level <span className="text-destructive">*</span>
+                </Label>
+                <RadioGroup 
+                  value={formData.risk} 
+                  onValueChange={handleRadioChange}
+                  className="flex space-x-4"
+                >
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="high" id="high-risk" />
+                    <Label htmlFor="high-risk" className="cursor-pointer flex items-center gap-1">
+                      <AlertTriangle className="h-4 w-4 text-red-500" />
+                      High Risk
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <RadioGroupItem value="low" id="low-risk" />
+                    <Label htmlFor="low-risk" className="cursor-pointer flex items-center gap-1">
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                      Low Risk
+                    </Label>
+                  </div>
+                </RadioGroup>
               </div>
               
               {/* Image Upload */}

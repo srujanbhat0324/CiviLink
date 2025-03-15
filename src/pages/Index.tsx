@@ -1,7 +1,7 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Logo from '@/components/Logo';
+import NavBar from '@/components/NavBar';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Flag } from 'lucide-react';
@@ -35,17 +35,7 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col">
       {/* Navbar */}
-      <header className="p-6 flex justify-between items-center animate-fade-in">
-        <Logo />
-        <div className="flex gap-4">
-          <Link to="/login">
-            <Button variant="outline" className="rounded-full px-5">Login</Button>
-          </Link>
-          <Link to="/signup">
-            <Button className="rounded-full px-5 bg-gradient-to-r from-civilink-blue to-civilink-indigo hover:opacity-90 transition-opacity">Sign Up</Button>
-          </Link>
-        </div>
-      </header>
+      <NavBar />
       
       {/* Hero Section */}
       <section className="flex-grow flex flex-col md:flex-row items-center">
