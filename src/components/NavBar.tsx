@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
   NavigationMenu, 
@@ -12,7 +12,7 @@ import {
 import { cn } from '@/lib/utils';
 import Logo from '@/components/Logo';
 import { Button } from '@/components/ui/button';
-import { Home, Flag, Battery, Road, Trash2, User } from 'lucide-react';
+import { Home, Flag, Battery, User, Trash2 } from 'lucide-react';
 
 const NavBar = () => {
   const location = useLocation();
@@ -95,7 +95,9 @@ const NavBar = () => {
                         "flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md hover:bg-accent",
                         location.pathname === "/section/road" ? "text-foreground" : "text-muted-foreground"
                       )}>
-                        <Road className="h-4 w-4" />
+                        <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
                         <span>Road</span>
                       </NavigationMenuLink>
                     </Link>
