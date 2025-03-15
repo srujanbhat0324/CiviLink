@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
   NavigationMenu, 
@@ -12,10 +12,25 @@ import {
 import { cn } from '@/lib/utils';
 import Logo from '@/components/Logo';
 import { Button } from '@/components/ui/button';
-import { Home, Flag, Battery, User, Trash2 } from 'lucide-react';
+import { Home, Flag, Battery, User, Trash2, LayoutDashboard, LogOut } from 'lucide-react';
 
 const NavBar = () => {
   const location = useLocation();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  
+  // Check login status on mount
+  useEffect(() => {
+    // In a real app, you'd check a token in localStorage or a cookie
+    // For demo purposes, we'll create a simple login state
+    const userLoggedIn = localStorage.getItem('user') !== null;
+    setIsLoggedIn(userLoggedIn);
+  }, []);
+  
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    setIsLoggedIn(false);
+    // You would also navigate to home or login page in a real app
+  };
   
   return (
     <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-border py-3 px-6">
@@ -34,6 +49,19 @@ const NavBar = () => {
                   )}>
                     <Home className="h-4 w-4" />
                     <span>Home</span>
+                  </NavigationMenuLink>
+                </Link>
+              </NavigationMenuItem>
+              
+              {/* Dashboard Link */}
+              <NavigationMenuItem>
+                <Link to="/dashboard">
+                  <NavigationMenuLink className={cn(
+                    "flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md hover:bg-accent",
+                    location.pathname === "/dashboard" ? "text-foreground" : "text-muted-foreground"
+                  )}>
+                    <LayoutDashboard className="h-4 w-4" />
+                    <span>Dashboard</span>
                   </NavigationMenuLink>
                 </Link>
               </NavigationMenuItem>
@@ -131,12 +159,25 @@ const NavBar = () => {
         </div>
         
         <div className="flex items-center gap-4">
-          <Link to="/login">
-            <Button variant="outline" className="rounded-full px-5">Login</Button>
-          </Link>
-          <Link to="/signup">
-            <Button className="rounded-full px-5 bg-gradient-to-r from-civilink-blue to-civilink-indigo hover:opacity-90 transition-opacity">Sign Up</Button>
-          </Link>
+          {isLoggedIn ? (
+            <Button 
+              variant="outline" 
+              className="rounded-full px-5 flex items-center gap-2"
+              onClick={handleLogout}
+            >
+              <LogOut className="h-4 w-4" />
+              Logout
+            </Button>
+          ) : (
+            <>
+              <Link to="/login">
+                <Button variant="outline" className="rounded-full px-5">Login</Button>
+              </Link>
+              <Link to="/signup">
+                <Button className="rounded-full px-5 bg-gradient-to-r from-civilink-blue to-civilink-indigo hover:opacity-90 transition-opacity">Sign Up</Button>
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </header>

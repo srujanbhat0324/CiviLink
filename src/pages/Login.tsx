@@ -1,12 +1,18 @@
 
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import AuthLayout from '@/components/AuthLayout';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Eye, EyeOff } from 'lucide-react';
+
+// Demo users for testing purposes
+const DEMO_USERS = [
+  { username: 'user1', password: 'password123', name: 'John Doe', mobile: '1234567890' },
+  { username: 'user2', password: 'password123', name: 'Jane Smith', mobile: '0987654321' }
+];
 
 const Login = () => {
   const [username, setUsername] = useState('');
@@ -17,6 +23,16 @@ const Login = () => {
   
   const { toast } = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Check if user is already logged in
+  useEffect(() => {
+    const user = localStorage.getItem('user');
+    if (user) {
+      // If user is already logged in, redirect to the home page
+      navigate('/');
+    }
+  }, [navigate]);
   
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -40,16 +56,38 @@ const Login = () => {
     
     setIsLoading(true);
     
-    // Simulate API call
+    // Check if user exists in our demo data
+    const user = DEMO_USERS.find(
+      u => u.username === username && u.password === password
+    );
+    
     setTimeout(() => {
       setIsLoading(false);
-      toast({
-        title: "Login successful",
-        description: "Welcome back to CiviLink!",
-      });
-      // Normally you would redirect to a dashboard or home page
-      navigate('/');
-    }, 1500);
+      
+      if (user) {
+        // Store user data in localStorage (in a real app, you'd store a token)
+        localStorage.setItem('user', JSON.stringify({
+          username: user.username,
+          name: user.name,
+          mobile: user.mobile
+        }));
+        
+        toast({
+          title: "Login successful",
+          description: `Welcome back, ${user.name}!`,
+        });
+        
+        // Redirect to dashboard or the page they came from
+        const redirectTo = location.state?.from || '/dashboard';
+        navigate(redirectTo);
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Login failed",
+          description: "Invalid username or password. Try with 'user1' and 'password123'.",
+        });
+      }
+    }, 1000);
   };
   
   return (
@@ -116,6 +154,10 @@ const Login = () => {
         >
           {isLoading ? "Logging in..." : "Login"}
         </Button>
+        
+        <p className="text-xs text-center text-muted-foreground">
+          Demo credentials: username "user1", password "password123"
+        </p>
       </form>
     </AuthLayout>
   );

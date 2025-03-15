@@ -16,6 +16,7 @@ import Electricity from "./pages/section/Electricity";
 import Road from "./pages/section/Road";
 import Cleanliness from "./pages/section/Cleanliness";
 import Profile from "./pages/Profile";
+import Dashboard from "./pages/Dashboard";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +31,7 @@ const App = () => (
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/complaint" element={<ComplaintForm />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           
           {/* Issues Routes */}
           <Route path="/issues/reported" element={<Reported />} />
