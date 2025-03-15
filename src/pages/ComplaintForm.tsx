@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
@@ -18,6 +17,16 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import Logo from '@/components/Logo';
 import NavBar from '@/components/NavBar';
 import { ArrowLeft, Flag, Image, MapPin, Upload, AlertTriangle, CheckCircle } from 'lucide-react';
+
+const getCurrentDate = () => {
+  const today = new Date();
+  return today.toISOString().split('T')[0];
+};
+
+const getStoredComplaints = () => {
+  const storedComplaints = localStorage.getItem('complaints');
+  return storedComplaints ? JSON.parse(storedComplaints) : [];
+};
 
 const ComplaintForm = () => {
   const [location, setLocation] = useState<{lat: number, lng: number} | null>(null);
@@ -133,8 +142,27 @@ const ComplaintForm = () => {
       return;
     }
 
-    // Here you would typically submit the data to your backend
-    // For now, we'll just show a success message and redirect
+    // Get existing complaints from localStorage
+    const existingComplaints = getStoredComplaints();
+    
+    // Create a new complaint object
+    const newComplaint = {
+      id: Date.now(), // Use timestamp as a simple ID
+      description: formData.description,
+      image: imagePreview || "https://placehold.co/600x400/png", // Use the imagePreview URL
+      location: location,
+      user: "Current User", // In a real app, this would be the logged-in user
+      date: getCurrentDate(),
+      likes: 0,
+      likedBy: [],
+      comments: [],
+      risk: formData.risk as "high" | "low",
+      category: formData.category as "electricity" | "road" | "cleanliness",
+    };
+    
+    // Save to localStorage
+    const updatedComplaints = [...existingComplaints, newComplaint];
+    localStorage.setItem('complaints', JSON.stringify(updatedComplaints));
     
     toast({
       title: "Complaint submitted successfully!",
